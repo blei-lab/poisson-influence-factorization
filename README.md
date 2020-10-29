@@ -47,7 +47,12 @@ infile = './out/conf=(50, 50);conf_type=both.npz'
 res = np.load(infile)
 ```
 The fitted results can be accessed using  ```res['fitted']```, the ground truth with  ```res['true']```.  
-You can change the default parameters by passing them via command line with the corresponding flag. See directly the code ```pokec/run_experiment.py``` for a list of flags and their default values.  	
+You can change the default parameters by passing them via command line with the corresponding flag. 
+
+For a description of the list of flags and their default values, run:
+```bash
+python -m pokec.run_experiment --help
+``` 
 
 Alternatively, you can run a script to reproduce the results from the semi-simulated experiments (Table 3) in the paper (and include the additional PIF-variant studied in the appendix). This will run the code for all set of parameters presented in the paper.  
 To use the code for this purpose, run all scripts from ```/src```.
