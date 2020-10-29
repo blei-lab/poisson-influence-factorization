@@ -14,26 +14,41 @@ from sklearn.metrics import mean_squared_error as mse
 from sklearn.decomposition import NMF
 from itertools import product
 
+from absl import flags
+from absl import app
+
 def post_process_influence(X, Beta):
 	total_X = X.sum(axis=1)
 	no_X = total_X == 0
 	Beta[no_X] = 1.
 	return Beta
 
-def get_average_embeddings(A, E, average=True):
-	embed = A.dot(E)
-	if average:
-		N_friends = A.sum(axis=1)
-		has_friends = N_friends > 0
-		embed[has_friends,:] = embed[has_friends,:]/N_friends[has_friends][:,np.newaxis]
-	return embed
-
 def get_set_overlap(Beta_p, Beta, k=50):
 	top = np.argsort(Beta)[-k:]
 	top_p = np.argsort(Beta_p)[-k:]
 	return np.intersect1d(top, top_p).shape[0]/np.union1d(top, top_p).shape[0]
 
-def main():
+def main(argv):
+	datadir = FLAGS.data_dir
+	outdir = FLAGS.out_dir
+	model = FLAGS.model
+	variant = FLAGS.variant
+
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
+	
+	confounding_type = FLAGS.confounding_type
+	configs = FLAGS.configs
+	K = FLAGS.num_components
+	P = FLAGS.num_exog_components
+	seed = FLAGS.seed
+
+	confounding_type = confounding_type.split(',')
+	confounding_configs = [(int(c.split(',')[0]), int(c.split(',')[1])) for c in configs.split(':')]
+
+	print("Confounding configs:", confounding_configs)
+	print("Model:", model)
+
 	write = os.path.join(outdir, model + '.' + variant + '_model_fitted_params')
 	os.makedirs(write, exist_ok=True)
 
@@ -176,36 +191,15 @@ def main():
 			
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
-	parser.add_argument("--data-dir", action="store", default='../dat/pokec/regional_subset')
-	parser.add_argument("--out-dir", action="store", default="../out/")
-	parser.add_argument("--model", action="store", default='pif')
-	parser.add_argument("--variant", action="store", default='z-theta-joint')
-	parser.add_argument("--confounding_type", action="store", default="both")
-	parser.add_argument("--configs", action="store", default='50,50')
-	parser.add_argument("--num_components", action="store", default=10, type=int)
-	parser.add_argument("--num_exog_components", action="store", default=10, type=int)
-	parser.add_argument("--seed", action="store", default=10, type=int)
+	FLAGS = flags.FLAGS
+	flags.DEFINE_string('model', 'pif', "method to use selected from one of [pif, spf, unadjusted, network_pref_only, item_only, item_only_oracle, network_only_oracle, no_unobs (gold standard)]")
+	flags.DEFINE_string('data_dir', '../dat/pokec/regional_subset', "path to Pokec profiles and network files")
+	flags.DEFINE_string('out_dir', '../out/', "directory to write output files to")
+	flags.DEFINE_string('variant', 'z-theta-joint', 'variant for fitting per-person substitutes, chosen from one of [z-theta-joint (joint model), z-only (community model only), z-theta-concat (MF and community model outputs concatenated), theta-only (MF only)]')
+	flags.DEFINE_string('confounding_type', 'both', 'comma-separated list of types of confounding to simulate in outcome, chosen from [homophily, exog, both]')
+	flags.DEFINE_string('configs', '50,50', 'list of confounding strength configurations to use in simulation; must be in format "[confounding strength 1],[noise strength 1]:[confounding strength 2],[noise strength 2], ..."')
+	flags.DEFINE_integer('num_components', 10, 'number of components to use to fit factor model for per-person substitutes')
+	flags.DEFINE_integer('num_exog_components', 10, 'number of components to use to fit factor model for per-item substitutes')
+	flags.DEFINE_integer('seed', 10, 'random seed passed to simulator in each experiment')
 
-	args = parser.parse_args()
-	datadir = args.data_dir
-	outdir = args.out_dir
-	model = args.model
-	variant = args.variant
-
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
-	
-	confounding_type = args.confounding_type
-	configs = args.configs
-	K = args.num_components
-	P = args.num_exog_components
-	seed = args.seed
-
-	confounding_type = confounding_type.split(',')
-	confounding_configs = [(int(c.split(',')[0]), int(c.split(',')[1])) for c in configs.split(':')]
-
-	print("Confounding configs:", confounding_configs)
-	print("Model:", model)
-
-	main()
+	app.run(main)

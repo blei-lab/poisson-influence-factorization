@@ -1,8 +1,8 @@
 #!/bin/bash
 
 python -m pokec.run_experiment \
---data-dir=${DIR} \
---out-dir=${OUT} \
+--data_dir=${DIR} \
+--out_dir=${OUT} \
 --model=${MODEL} \
 --variant=${VARIANT} \
 --num_components=${NUM_COMPONENTS} \
