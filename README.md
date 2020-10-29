@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 To run the code with a particular choice of parameters, type on a terminal inside the directory ```/src```:
 ```bash
-python  pokec.run_experiment
+python -m pokec.run_experiment
 ``` 
 The default output file will be ```./out/conf=(50, 50);conf_type=both.npz``` (with the default values of the parameters).  To load the results, use for instance the python commands:
 ```bash
