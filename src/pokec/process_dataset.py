@@ -5,6 +5,7 @@ from scipy.sparse import csr_matrix
 import pickle
 from scipy.stats import gamma, poisson, bernoulli
 from scipy.special import expit
+import sys
 
 class PokecSimulator():
 	def __init__(self, datapath='../dat/pokec/regional_subset', subnetwork_size=3000, influence_shp=0.005, num_items=3000, covar_1='region_categorical', covar_2='random', covar_2_num_cats=5, **kwargs):
@@ -20,6 +21,9 @@ class PokecSimulator():
 
 	def parse_args(self, **kwargs):
 		self.random_seed = int(kwargs.get('seed', 12345))
+		self.do_sensitivity = bool(kwargs.get('do_sensitivity', False))
+		self.sensitivity_parameter = float(kwargs.get('sensitivity_parameter', 1.))
+		self.error_rate = float(kwargs.get('error_rate', 0.3))
 		np.random.seed(self.random_seed)
 
 	def snowball_sample(self):
@@ -153,7 +157,36 @@ class PokecSimulator():
 		else:
 			base_rate = random_pref
 
-		y_past = poisson.rvs(base_rate)
-		influence_rate = (self.beta * self.A).dot(y_past)
-		y = poisson.rvs(base_rate + influence_rate)
+	
+		if self.do_sensitivity:
+			bias = self.create_bias()
+			y_past = poisson.rvs(base_rate + bias)
+			influence_rate = (self.beta * self.A).dot(y_past)
+			y = poisson.rvs(base_rate + influence_rate + bias)
+		else:
+			y_past = poisson.rvs(base_rate)
+			influence_rate = (self.beta * self.A).dot(y_past)
+			y = poisson.rvs(base_rate + influence_rate)
+		
 		return y, y_past
+
+	def create_bias(self, gamma_mean=0.1, gamma_scale=0.1):
+		N = self.A.shape[0]
+		M = self.num_items
+
+		bias = np.zeros((N,M))
+		(u1, u2) = np.nonzero(self.A)
+		mask = bernoulli.rvs(self.error_rate, size=u1.shape[0])
+		
+		for edge_iter in range(u1.shape[0]):
+			if mask[edge_iter]:
+				i = u1[edge_iter]
+				j = u2[edge_iter]
+				bias_mean = gamma_mean / self.sensitivity_parameter
+				bias_val = gamma.rvs((bias_mean/gamma_scale), scale=gamma_scale)
+				random_items = bernoulli.rvs(self.error_rate, size=self.num_items)
+				for k in np.nonzero(random_items):
+					bias[i,k] = bias_val
+					bias[j,k] = bias_val
+
+		return bias
