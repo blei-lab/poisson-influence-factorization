@@ -40,10 +40,10 @@ def main(argv):
 	ct = "both"
 	noise = 50.
 	confounding = 50.
-	losses = np.zeros(11)
+	losses = np.zeros(10)
 
-	for i, error in enumerate(np.arange(0., 1.1, step=0.1)):
-		simulation_model = PokecSimulator(datapath=datadir, subnetwork_size=3000, num_items=3000, influence_shp=0.0001, covar_2='random', covar_2_num_cats=5, seed=seed, do_sensitivity=True, sensitivity_parameter=0.5, error_rate=error)
+	for i, error in enumerate(np.arange(0.1, 1.1, step=0.1)):
+		simulation_model = PokecSimulator(datapath=datadir, subnetwork_size=3000, num_items=3000, influence_shp=0.001, covar_2='random', covar_2_num_cats=5, seed=seed, do_sensitivity=True, sensitivity_parameter=error, error_rate=0.3)
 		simulation_model.process_dataset()
 		A = simulation_model.A
 
