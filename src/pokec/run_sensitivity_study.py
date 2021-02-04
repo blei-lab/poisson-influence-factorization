@@ -43,7 +43,7 @@ def main(argv):
 	losses = np.zeros(11)
 
 	for i, error in enumerate(np.arange(0., 1.1, step=0.1)):
-		simulation_model = PokecSimulator(datapath=datadir, subnetwork_size=3000, num_items=3000, influence_shp=0.0005, covar_2='random', covar_2_num_cats=5, seed=seed, do_sensitivity=True, sensitivity_parameter=1., error_rate=error)
+		simulation_model = PokecSimulator(datapath=datadir, subnetwork_size=3000, num_items=3000, influence_shp=0.0001, covar_2='random', covar_2_num_cats=5, seed=seed, do_sensitivity=True, sensitivity_parameter=0.5, error_rate=error)
 		simulation_model.process_dataset()
 		A = simulation_model.A
 
@@ -87,7 +87,7 @@ def main(argv):
 		sys.stdout.flush()
 		losses[i] = loss
 
-	outfile = os.path.join(out, 'result')
+	outfile = os.path.join(outdir, 'result')
 	np.savez_compressed(outfile, result=losses)
 			
 
