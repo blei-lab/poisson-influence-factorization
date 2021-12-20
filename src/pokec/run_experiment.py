@@ -202,6 +202,6 @@ if __name__ == '__main__':
 	flags.DEFINE_integer('num_components', 10, 'number of components to use to fit factor model for per-person substitutes')
 	flags.DEFINE_integer('num_exog_components', 10, 'number of components to use to fit factor model for per-item substitutes')
 	flags.DEFINE_integer('seed', 10, 'random seed passed to simulator in each experiment')
-	flags.DEFINE_float('influence_strength', 0.005)
+	flags.DEFINE_float('influence_strength', 0.005, "Shape parameter that controls the average influence in network.")
 
 	app.run(main)
