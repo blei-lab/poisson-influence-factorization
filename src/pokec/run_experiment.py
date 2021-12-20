@@ -34,8 +34,8 @@ def main(argv):
 	model = FLAGS.model
 	variant = FLAGS.variant
 
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	# if not os.path.exists(outdir):
+	# 	os.makedirs(outdir)
 	
 	confounding_type = FLAGS.confounding_type
 	configs = FLAGS.configs

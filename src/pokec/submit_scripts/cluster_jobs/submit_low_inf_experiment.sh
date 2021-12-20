@@ -3,8 +3,8 @@ BASE_DIR=/proj/sml/projects/social-influence
 export DIR=/proj/sml/projects/social-influence/pokec/regional_subset/
 export NUM_COMPONENTS=5
 export NUM_EXOG_COMPONENTS=5
-export CONF_TYPES=homophily,exog,both
-export CONFIGS=50,10:50,50:50,100
+export CONF_TYPES=both
+export CONFIGS=50,50
 export INF_STRENGTH=1e-6
 
 for MODEL_ITER in unadjusted spf network_pref_only;
