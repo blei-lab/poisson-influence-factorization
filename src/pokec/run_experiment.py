@@ -42,6 +42,7 @@ def main(argv):
 	K = FLAGS.num_components
 	P = FLAGS.num_exog_components
 	seed = FLAGS.seed
+	influence_shp = FLAGS.influence_strength
 
 	confounding_type = confounding_type.split(',')
 	confounding_configs = [(int(c.split(',')[0]), int(c.split(',')[1])) for c in configs.split(':')]
@@ -52,7 +53,7 @@ def main(argv):
 	write = os.path.join(outdir, model + '.' + variant + '_model_fitted_params')
 	os.makedirs(write, exist_ok=True)
 
-	simulation_model = PokecSimulator(datapath=datadir, subnetwork_size=3000, num_items=3000, influence_shp=0.005, covar_2='random', covar_2_num_cats=5, seed=seed)
+	simulation_model = PokecSimulator(datapath=datadir, subnetwork_size=3000, num_items=3000, influence_shp=influence_shp, covar_2='random', covar_2_num_cats=5, seed=seed)
 	simulation_model.process_dataset()
 	A = simulation_model.A
 	print("Adj. size and mean:", A.shape, A.mean())
@@ -201,5 +202,6 @@ if __name__ == '__main__':
 	flags.DEFINE_integer('num_components', 10, 'number of components to use to fit factor model for per-person substitutes')
 	flags.DEFINE_integer('num_exog_components', 10, 'number of components to use to fit factor model for per-item substitutes')
 	flags.DEFINE_integer('seed', 10, 'random seed passed to simulator in each experiment')
+	flags.DEFINE_float('influence_strength', 0.005)
 
 	app.run(main)
