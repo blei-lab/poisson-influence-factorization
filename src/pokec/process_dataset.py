@@ -95,7 +95,10 @@ class PokecSimulator():
 
 	def make_simulated_influence(self):
 		N = self.A.shape[0]
-		influence = gamma.rvs(self.influence_shp, scale=10., size=N)
+		if self.influence_shp > 0:
+			influence = gamma.rvs(self.influence_shp, scale=10., size=N)
+		else:
+			influence = np.zeros(N)
 		return influence
 
 	def process_dataset(self):

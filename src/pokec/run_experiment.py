@@ -184,6 +184,8 @@ def main(argv):
 			score = get_set_overlap(Beta_p, Beta)
 			loss = mse(Beta, Beta_p)
 
+			print(Beta_p.mean())
+
 			print("Overlap:", score, "MSE:", loss)
 			print("*"*60)
 			sys.stdout.flush()
