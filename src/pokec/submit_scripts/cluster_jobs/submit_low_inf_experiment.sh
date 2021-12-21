@@ -5,7 +5,7 @@ export NUM_COMPONENTS=5
 export NUM_EXOG_COMPONENTS=5
 export CONF_TYPES=homophily,exog,both
 export CONFIGS=50,10:50,50:50,100
-export INF_STRENGTH=1e-6
+export INF_STRENGTH=0.0
 
 for MODEL_ITER in unadjusted spf network_pref_only;
 do
