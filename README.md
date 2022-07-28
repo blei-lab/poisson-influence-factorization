@@ -4,7 +4,7 @@ This repository contains the code and demo data for:
 - [1] _Estimating Social Influence from Observational Data_, by Dhanya Sridhar, Caterina De Bacco and David Blei.
 
 If you use this code please cite [1].   
-The paper can be found (ADD LINK) here (preprint).  
+The paper can be found here: https://arxiv.org/abs/2204.01633 (preprint).  
  
 Social influence the causal inference problem of determining how users affect the behavior of their friends in a network.
 For example, if a user shares a news article today and tomorrow, her friend does the same, we want to know if the 
